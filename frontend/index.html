@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FraudGuard AI — Enterprise Transaction Risk Engine</title>
+  
+  <!-- Chart.js and jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <!-- Premium Styles -->
+  <link rel="stylesheet" href="/static/style.css?v=3.5"/>
+  <script>
+    if (!localStorage.getItem('fg_session')) {
+      document.documentElement.classList.add('auth-mode');
+    }
+  </script>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="container topbar-container">
+      <a class="topbar-logo" href="#" onclick="showPage('analyse')">
+        <div class="topbar-mark" aria-hidden="true">FG</div>
+        <div class="brand-copy">
+          <span class="brand-name">FraudGuard AI</span>
+          <span class="brand-kicker">Enterprise risk control</span>
+        </div>
+      </a>
+      
+      <nav class="topbar-nav">
+        <button class="nav-btn active" id="nav-analyse" onclick="showPage('analyse')">Risk Evaluator</button>
+        <button class="nav-btn" id="nav-history" onclick="showPage('history')">
+          Activity Log <span id="histBadge" class="hist-badge" style="display:none;">0</span>
+        </button>
+        <button class="nav-btn" id="nav-developer" onclick="showPage('developer')">Developer Portal</button>
+      </nav>
+      
+      <div class="topbar-right">
+        <div class="live-pill" id="apiStatusContainer">
+          <div class="live-dot"></div>
+          <span id="apiStatus">Engine online</span>
+        </div>
+        <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle Theme" aria-label="Toggle Theme">
+          <!-- Default Moon SVG -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <button class="theme-btn" id="logoutBtn" onclick="handleLogout()" title="Logout" aria-label="Logout" style="margin-left: 8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       RISK EVALUATOR PAGE
+       ========================================== -->
+  <div class="page active" id="page-analyse">
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-glow-1"></div>
+      <div class="hero-glow-2"></div>
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="eyebrow">Enterprise Risk Gateway</div>
+          <h1 class="hero-title">Protect payments with <span>FraudGuard AI</span>.</h1>
+          <p class="hero-description">
+            FraudGuard AI runs an advanced real-time risk engine, evaluating transaction metadata against behavioral pattern dictionaries to identify threats in under 15ms.
+          </p>
+          <div class="hero-actions">
+            <a class="btn-primary" href="#analysisWorkbench">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+              </svg>
+              Run Simulation Check
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Analysis Workbench -->
+    <div class="container">
+      <main class="main-workbench" id="analysisWorkbench">
+        
+        <!-- Left Column -->
+        <div class="workbench-col">
+          <!-- Left Column: Check Transaction Card -->
+          <section class="card" aria-labelledby="workbench-title">
+            
+            <!-- SCAN OVERLAY ANIMATION -->
+            <div class="scan-overlay" id="scanOverlay">
+              <div class="spinner-large"></div>
+              <div class="scan-text" style="font-weight: 500; font-size: 13px; font-family: inherit; margin-top: 12px; color: var(--muted);">Evaluating transaction signatures...</div>
+            </div>
+
+            <div class="card-hd">
+              <div>
+                <h2 class="card-title" id="workbench-title">Transaction Simulator</h2>
+                <div class="card-sub">Simulate a payment transaction to calculate risk score</div>
+              </div>
+              <span class="card-chip">Simulator</span>
+            </div>
+            
+            <div class="form-body">
+              <!-- Amount Input -->
+              <label class="field-label" for="f-amount">Transaction Amount</label>
+              <div class="amount-input-wrap">
+                <span class="currency-symbol">₹</span>
+                <input class="amount-input" type="number" id="f-amount" placeholder="0.00" min="0" step="0.01"/>
+              </div>
+              
+              <!-- Quick Presets -->
+              <div class="amount-presets">
+                <button class="preset-btn" onclick="selectPreset(15.50, 'Micro transaction', 12000)">₹15.50 (Micro)</button>
+                <button class="preset-btn" onclick="selectPreset(250.00, 'Standard Retail', 36000)">₹250 (Retail)</button>
+                <button class="preset-btn" onclick="selectPreset(4800.00, 'Corporate Buy', 54000)">₹4,800 (High-val)</button>
+                <button class="preset-btn" onclick="selectPreset(85000.00, 'High limit transfer', 82000)">₹85,000 (Extreme)</button>
+              </div>
+              
+              <!-- Inputs row -->
+              <div class="time-row">
+                <div class="field">
+                  <label class="field-label" for="f-time">Time (Seconds)</label>
+                  <input type="number" id="f-time" value="0" min="0" step="1"/>
+                </div>
+                <div class="field">
+                  <label class="field-label" for="f-hour">Hour of Day</label>
+                  <input type="number" id="f-hour" placeholder="0–23" min="0" max="23" step="1" oninput="syncHour()"/>
+                </div>
+                
+                <!-- Time Visual Slider Container -->
+                <div class="time-slider-container">
+                  <div class="time-slider-header">
+                    <span>Visual Hour Selector</span>
+                    <span class="time-slider-val" id="slider-val-display">00:00</span>
+                  </div>
+                  <input type="range" class="time-slider" id="f-time-slider" min="0" max="23" value="0" oninput="syncHourSlider()"/>
+                  <div class="time-slider-labels">
+                    <span>Night</span>
+                    <span>Morning</span>
+                    <span>Midday</span>
+                    <span>Evening</span>
+                    <span>Night</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="hint-box">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+                <p>
+                  <strong>Simulator Guide:</strong> Fill in the transaction parameters above. The gateway analyzes metadata details against historical risk baselines to score potential threats.
+                </p>
+              </div>
+              
+              <button class="btn-analyse" id="btnAnalyse" onclick="predict()">
+                <div class="spinner" id="spinner"></div>
+                <span id="btnText">Evaluate Transaction Risk</span>
+              </button>
+              
+              <div class="btn-row2">
+                <button class="btn-ghost" onclick="loadRandom(false)">Simulate Legit Swipe</button>
+                <button class="btn-ghost" onclick="loadRandom(true)">Simulate Threat Swipe</button>
+              </div>
+              
+              <div class="matched-tag" id="matchedTag" style="display:none;">
+                <span>Reference Transaction Amount</span> &mdash; Amount: <span id="matchedAmt">—</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Live Terminal Card -->
+          <section class="card">
+            <div class="card-hd">
+              <div>
+                <h2 class="card-title">Real-time Traffic Feed</h2>
+                <div class="card-sub">Monitoring active transaction simulator throughput</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="card-chip" id="streamStatusBadge" style="background: var(--divider); color: var(--muted); text-transform: uppercase;">Inactive</span>
+                <input type="checkbox" id="streamToggle" onchange="toggleLiveStream()" style="cursor:pointer; width: 16px; height: 16px;"/>
+              </div>
+            </div>
+            <div class="form-body" style="padding-top: 14px;">
+              <div class="feed-terminal" id="feedTerminal">
+                <div class="feed-item" style="justify-content: center; color: var(--muted);">
+                  Toggle switch to begin streaming transaction logs...
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Right Column -->
+        <div class="workbench-col">
+          <!-- Policy Rules Card -->
+          <section class="card">
+            <div class="card-hd">
+              <div>
+                <h2 class="card-title">Risk Threshold Policies</h2>
+                <div class="card-sub">Set risk boundary thresholds for automated clearance routing</div>
+              </div>
+              <span class="card-chip">Risk Boundaries</span>
+            </div>
+            <div class="form-body">
+              <div class="policy-slider-box">
+                <div class="policy-slider-label">
+                  <span>Threat Decline Threshold</span>
+                  <span id="labelDeclineThreshold">75%</span>
+                </div>
+                <input type="range" class="policy-slider" id="f-decline-slider" min="10" max="90" value="75" oninput="updatePolicyLabels()"/>
+              </div>
+              <div class="policy-slider-box">
+                <div class="policy-slider-label">
+                  <span>Audit Alert Threshold</span>
+                  <span id="labelAuditThreshold">20%</span>
+                </div>
+                <input type="range" class="policy-slider" id="f-audit-slider" min="5" max="50" value="20" oninput="updatePolicyLabels()"/>
+              </div>
+            </div>
+          </section>
+
+          <!-- Right Column: Results Card -->
+          <section class="card" aria-labelledby="results-title">
+            <div class="card-hd">
+              <div>
+                <h2 class="card-title" id="results-title">Risk Scorecard</h2>
+                <div class="card-sub">Real-time probability metrics and SHAP contributions</div>
+              </div>
+              <span class="card-chip">Analysis</span>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState">
+              <div class="verdict-empty">
+                <svg class="vempty-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <h3>Awaiting Simulation Data</h3>
+                <p>Input transaction parameters on the left and click evaluate to view live scoring indicators.</p>
+              </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div id="resultContent" style="display:none;">
+              <div class="verdict-result">
+                
+                <!-- Banner -->
+                <div class="vbanner" id="vBanner">
+                  <div>
+                    <div class="vtag" id="vTag">PASSED</div>
+                    <div class="vmain" id="vMain">Legitimate Swipe</div>
+                  </div>
+                  <div>
+                    <div class="vprob-label">Risk Probability</div>
+                    <div class="vprob-val" id="vProb">0.0%</div>
+                  </div>
+                </div>
+
+                <!-- Gauge Chart + Likelihood Progress -->
+                <div class="gauge-row">
+                  <div class="gauge-wrap">
+                    <canvas id="gaugeCanvas" height="100"></canvas>
+                    <div class="gauge-center">
+                      <div class="gauge-num" id="gaugeNum">0.0%</div>
+                      <div class="gauge-sub">threat</div>
+                    </div>
+                  </div>
+                  <div class="bars-col">
+                    <div class="bar-label"><span>Transaction Threat Score</span><span id="sl-pct">—</span></div>
+                    <div class="bar-track">
+                      <div class="bar-fill" id="slFill" style="width:0%"></div>
+                    </div>
+                    <div class="bar-label"><span>Classifier Evaluation Score</span><span id="mc-pct">—</span></div>
+                    <div class="bar-track">
+                      <div class="bar-fill navy" id="mcFill" style="width:0%"></div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- SHAP features list -->
+              <div class="shap-section">
+                <div class="shap-hd">
+                  <span>Evaluated Risk Signatures</span>
+                  <span>Impact</span>
+                </div>
+                <div id="shapList"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       HISTORY PAGE
+       ========================================== -->
+  <div class="page" id="page-history">
+    <div class="container history-page">
+      <div class="history-header">
+        <div>
+          <h2>Evaluation Log</h2>
+          <p>Recent transactions evaluated in this sandbox gateway session.</p>
+        </div>
+        <button class="btn-ghost" onclick="clearHistory()">Clear Logs</button>
+      </div>
+      
+      <div class="card">
+        <div id="historyEmpty" class="history-empty">
+          <div class="history-empty-icon">📂</div>
+          <p>No transaction logs recorded yet. Try running an evaluator simulation.</p>
+          <button class="btn-ghost" style="margin: 16px auto 0;" onclick="showPage('analyse')">Go to Sandbox</button>
+        </div>
+        
+        <div id="historyWrap" style="display:none;" class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>transaction ref</th>
+                <th>amount</th>
+                <th>threat probability</th>
+                <th>risk classification</th>
+                <th>gateway status</th>
+                <th>timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       DEVELOPER PORTAL PAGE
+       ========================================== -->
+  <div class="page" id="page-developer">
+    <div class="container history-page">
+      <div class="history-header">
+        <div>
+          <h2>Developer Integration Portal</h2>
+          <p>Access sandbox API credentials and SDK quick-start integration snippets.</p>
+        </div>
+      </div>
+      
+      <div class="dev-portal-layout">
+        <!-- Left: API Key -->
+        <div class="card">
+          <div class="card-hd">
+            <div>
+              <h3 class="card-title">API Authorization Key</h3>
+              <div class="card-sub">Secret credential key for secure backend routes</div>
+            </div>
+            <span class="card-chip">Headers Key</span>
+          </div>
+          <div class="form-body">
+            <label class="field-label">Sandbox API Key</label>
+            <div class="api-key-container">
+              <input type="password" class="api-key-input" id="apiKeyVal" value="fg_live_7a3d90f239e083a21bc9e4b" readonly style="letter-spacing: 0.15em; font-family: 'JetBrains Mono', monospace;"/>
+              <button class="btn-toggle-visibility" onclick="toggleApiKeyVisibility()" title="Show API Key" aria-label="Show API Key">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+              <button class="btn-copy" onclick="copyApiKey()">Copy</button>
+            </div>
+            
+            <div class="hint-box" style="margin-bottom: 0;">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+              <p>
+                <strong>Gateway Policy:</strong> The header key must be passed as a bearer token `Authorization: Bearer fg_live_...` in all transaction verification API requests.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right: Code snippets -->
+        <div class="card">
+          <div class="card-hd">
+            <div>
+              <h3 class="card-title">Integration Code Guides</h3>
+              <div class="card-sub">Quick-start SDK boilerplate examples</div>
+            </div>
+            <span class="card-chip">Boilerplate SDK</span>
+          </div>
+          <div class="form-body">
+            <div class="dev-tabs">
+              <button class="dev-tab-btn active" id="dev-tab-shell" onclick="showDevSnippet('shell')">Shell / curl</button>
+              <button class="dev-tab-btn" id="dev-tab-node" onclick="showDevSnippet('node')">Node.js</button>
+              <button class="dev-tab-btn" id="dev-tab-python" onclick="showDevSnippet('python')">Python</button>
+            </div>
+            
+            <!-- Code Shell -->
+            <div class="code-snippet active" id="snippet-shell">
+              <pre class="code-window"><code>curl -X POST http://localhost:8000/predict \
+  -H "Authorization: Bearer fg_live_7a3d90f239e083a21bc9e4b" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 1500.00,
+    "time": 36000.0
+  }'</code></pre>
+            </div>
+            
+            <!-- Code Node -->
+            <div class="code-snippet" id="snippet-node">
+              <pre class="code-window"><code>const fetch = require('node-fetch');
+
+const runRiskAudit = async (amount, time) => {
+  const response = await fetch('http://localhost:8000/predict', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer fg_live_7a3d90f239e083a21bc9e4b',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ amount, time })
+  });
+  
+  const riskResult = await response.json();
+  console.log(`Risk Class: ${riskResult.risk_level} (${riskResult.fraud_probability * 100}%)`);
+};
+
+runRiskAudit(1500.00, 36000.0);</code></pre>
+            </div>
+            
+            <!-- Code Python -->
+            <div class="code-snippet" id="snippet-python">
+              <pre class="code-window"><code>import requests
+
+def run_risk_audit(amount: float, time: float):
+    url = "http://localhost:8000/predict"
+    headers = {
+        "Authorization": "Bearer fg_live_7a3d90f239e083a21bc9e4b",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "amount": amount,
+        "time": time
+    }
+    
+    res = requests.post(url, headers=headers, json=payload)
+    result = res.json()
+    print(f"Risk Rating: {result['risk_level']} ({result['fraud_probability'] * 100}%)")
+
+run_risk_audit(1500.00, 36000.0)</code></pre>
+            </div>
+          </div>
+        </div>
+       </div>
+          </div>
+
+          <button class="slider-arrow" id="vNext" onclick="slideVideo(1)" aria-label="Next slide">
+            <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+          </button>
+        </div>
+
+        <div class="slider-dots" id="sliderDots"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==========================================
+       REPORT TOAST
+       ========================================== -->
+  <div class="report-toast" id="reportToast">
+    <div class="report-toast-header">
+      <div class="report-toast-title">
+        <div class="report-toast-title-icon">📄</div>
+        <span>Export Risk Report?</span>
+      </div>
+      <button class="report-toast-close" onclick="closeReportToast()">&times;</button>
+    </div>
+    <p>Export a comprehensive transaction-risk PDF report, featuring risk scoring matrices, anomaly signatures, and compliance details.</p>
+    <div class="report-toast-features">
+      <span class="report-chip">Risk class</span>
+      <span class="report-chip">Signatures</span>
+      <span class="report-chip">Reference ID</span>
+      <span class="report-chip">SLA policy</span>
+    </div>
+    <button class="btn-download-report" id="btnDownloadReport" onclick="downloadReport()">
+      📄 Download Risk Report
+    </button>
+    <div class="report-status" id="reportStatus"></div>
+  </div>
+
+  <!-- Back to top button -->
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top" aria-label="Back to top">
+    <svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
+  </button>
+
+  <!-- ==========================================
+       AUTH PAGE (LOGIN / SIGNUP)
+       ========================================== -->
+  <div class="auth-page" id="authPage">
+    <div class="auth-glow-1"></div>
+    <div class="auth-glow-2"></div>
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="topbar-mark">FG</div>
+        <span>FraudGuard AI</span>
+      </div>
+      <h2 class="auth-title" id="authTitle">Welcome Back</h2>
+      <p class="auth-sub" id="authSub">Enter your security credentials to access the console</p>
+      
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="auth-tab-login" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="auth-tab" id="auth-tab-signup" onclick="switchAuthTab('signup')">Register</button>
+      </div>
+      
+      <form id="authForm" onsubmit="handleAuthSubmit(event)">
+        <div class="field" style="text-align: left;">
+          <label class="field-label" for="auth-email">Corporate Email</label>
+          <input type="email" id="auth-email" class="auth-input" placeholder="name@company.com" required/>
+        </div>
+        <div class="field" style="text-align: left; margin-top: 14px;">
+          <label class="field-label" for="auth-password">Security Password</label>
+          <div class="auth-password-wrap" style="display: flex; gap: 8px; margin-top: 6px;">
+            <input type="password" id="auth-password" class="auth-input" placeholder="••••••••" required style="margin-top: 0; flex: 1;"/>
+            <button class="btn-toggle-visibility" type="button" onclick="toggleAuthPasswordVisibility()" title="Show Password" aria-label="Show Password" style="height: 42px; border-radius: 8px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Error box -->
+        <div class="auth-error" id="authError" style="display: none;"></div>
+        
+        <button class="btn-analyse" type="submit" style="margin-top: 20px; width: 100%; height: 42px;">
+          <span id="authBtnText">Access Console</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- App logic script -->
+  <script src="/static/app.js?v=3.5"></script>
+</body>
+</html>

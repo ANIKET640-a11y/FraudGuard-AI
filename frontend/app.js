@@ -258,52 +258,55 @@ function getLaymanExplanation(result) {
   let explanation = '';
   
   if (lvl === 'high') {
-    explanation = `<strong>High Threat Blocked:</strong> This transaction was flagged as a potential fraud with a very high confidence score. `;
+    explanation = `<strong>Declined (High Risk):</strong> We blocked this transaction because it shows clear signs of fraud. `;
+    
+    const reasons = [];
     if (amount > 10000) {
-      explanation += `The transaction size of <strong>₹${amount.toLocaleString('en-IN')}</strong> is unusually high for standard profiles. `;
+      reasons.push(`the purchase amount of <strong>₹${amount.toLocaleString('en-IN')}</strong> is much larger than what is normally spent on this card`);
     }
-    if (topFeat === 'V17') {
-      explanation += `Our security engine detected that the payment request originated from a device situated abnormally far away from your card's historically trusted locations (<strong>Location Divergence</strong>).`;
-    } else if (topFeat === 'V14') {
-      explanation += `We detected a burst of multiple rapid payment attempts in a very short window of time (<strong>Swipe velocity</strong>), which is a common signature of card-testing bots.`;
-    } else if (topFeat === 'V11') {
-      explanation += `There was an unusually high number of rapid attempt signals (<strong>Attempt count</strong>) triggered in your session, suggesting automatic scripts.`;
-    } else if (topFeat === 'V12') {
-      explanation += `The purchase category doesn't match normal consumer spending trends for this profile (<strong>Merchant offset</strong>).`;
-    } else if (topFeat === 'V7') {
-      explanation += `The card was swiped from two locations that are physically impossible to travel between in this timeframe (<strong>Cross-border velocity</strong>).`;
+    
+    if (topFeat === 'V17' || topFeat === 'V4' || topFeat === 'V7') {
+      reasons.push(`the purchase was attempted from a location far away from where the cardholder normally lives or shops`);
+    } else if (topFeat === 'V14' || topFeat === 'V11') {
+      reasons.push(`someone tried to swipe the card multiple times in a matter of seconds, which usually means a computer script is trying to test if the card works`);
+    } else if (topFeat === 'V12' || topFeat === 'V2') {
+      reasons.push(`the purchase pattern (like the store category or time of day) is completely different from how the owner normally behaves`);
+    } else if (topFeat === 'V16') {
+      reasons.push(`the transaction amount is trying to drain the card's available balance too quickly`);
     } else {
-      explanation += `Key behavioral anomalies were detected in the communication nodes and hardware terminal routing tags, matching known fraudulent profiles.`;
+      reasons.push(`the digital path or network details used to make the purchase look suspicious`);
     }
-    explanation += ` The swipe has been declined immediately to protect the cardholder.`;
+    
+    explanation += `Specifically, ` + reasons.join(' and ') + `. To protect the account owner, this payment has been blocked.`;
     
   } else if (lvl === 'medium') {
-    explanation = `<strong>Suspicious Activity Detected:</strong> This transaction exhibits some moderate risk indicators. `;
+    explanation = `<strong>Verification Required (Medium Risk):</strong> This purchase looks a bit unusual, so we need to double-check it. `;
+    
+    const reasons = [];
     if (amount > 5000) {
-      explanation += `A transaction amount of <strong>₹${amount.toLocaleString('en-IN')}</strong> combined with atypical profile parameters triggered a caution. `;
+      reasons.push(`the purchase amount is moderately high`);
     }
-    if (topFeat === 'V17') {
-      explanation += `The device location displays a moderate discrepancy from regular purchase points (<strong>Location Divergence</strong>).`;
+    
+    if (topFeat === 'V17' || topFeat === 'V4') {
+      reasons.push(`it is being made from a new or unfamiliar city`);
     } else if (topFeat === 'V14') {
-      explanation += `The velocity check shows a slightly accelerated swipe rate (<strong>Swipe velocity</strong>).`;
+      reasons.push(`the card is being swiped slightly faster than usual`);
     } else if (topFeat === 'V16') {
-      explanation += `The transaction size represents a significant deviation relative to historical spending limits (<strong>Balance utilization</strong>).`;
+      reasons.push(`the transaction is approaching normal spending limits`);
     } else {
-      explanation += `Some minor anomalies were found in routing signatures and terminal parameters.`;
+      reasons.push(`the online checkout session shows minor irregularities`);
     }
-    explanation += ` We recommend routing the user through a 3D-Secure verification step (OTP verification) or holding for review.`;
+    
+    explanation += `This is because ` + reasons.join(' and ') + `. We recommend sending a 6-digit verification code (OTP) to the cardholder's phone to confirm they are the one making this purchase.`;
     
   } else {
-    explanation = `<strong>Approved (Legitimate):</strong> This transaction is fully approved. `;
-    if (amount > 0) {
-      explanation += `The payment of <strong>₹${amount.toLocaleString('en-IN')}</strong> aligns closely with normal spending patterns. `;
-    }
-    if (topFeat === 'V17' || topFeat === 'V14') {
-      explanation += `All primary indicators—including device location routing, transaction velocity, and swipe behavior—remain well within safe, expected baseline ranges.`;
-    } else {
-      explanation += `No significant threat indicators or anomalies were detected in the routing nodes or transaction metadata.`;
-    }
-    explanation += ` The transaction has successfully passed all security clearances.`;
+    explanation = `<strong>Approved (Safe):</strong> This transaction looks completely safe. `;
+    
+    const reasons = [];
+    reasons.push(`the purchase amount of <strong>₹${amount.toLocaleString('en-IN')}</strong> matches regular spending habits`);
+    reasons.push(`it was made from a trusted location and shows no signs of suspicious timing or rapid swiping`);
+    
+    explanation += `This is because ` + reasons.join(' and ') + `. The purchase has been processed and approved successfully.`;
   }
   
   return explanation;

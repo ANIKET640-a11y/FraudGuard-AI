@@ -861,6 +861,14 @@ function downloadReport() {
     infoBox('Node evaluation rating', confidence + '% Classifier Match', margin + colW + 8, y, colW);
     y += 32;
     
+    // Section: Executive Summary Insight
+    sectionTitle('Executive Summary Insight');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    setHex('#334155');
+    const rawExplanation = getLaymanExplanation(result).replace(/<\/?strong>/g, '');
+    y += wrapped(rawExplanation, margin, y, pageW - (margin * 2), 4.2) + 8;
+    
     // Section: Audit Trail Table
     sectionTitle('Audit Trail & Gateway Security Settings');
     fillHex('#F8FAFC');

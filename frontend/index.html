@@ -10,7 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   
   <!-- Premium Styles -->
-  <link rel="stylesheet" href="/static/style.css?v=4.1"/>
+  <link rel="stylesheet" href="/static/style.css?v=4.2"/>
   <script>
     if (!localStorage.getItem('fg_session')) {
       document.documentElement.classList.add('auth-mode');
@@ -549,69 +549,80 @@ run_risk_audit(1500.00, 36000.0)</code></pre>
        AUTH PAGE (LOGIN / SIGNUP)
        ========================================== -->
   <div class="auth-page" id="authPage">
-    <!-- Hanging Lamp Animation -->
-    <div class="lamp-container">
-      <div class="lamp-rope"></div>
-      <div class="lamp-body-svg">
-        <svg viewBox="0 0 100 100" width="80" height="80">
-          <path d="M20 50 L80 50 L70 20 L30 20 Z" fill="#2A3B30" stroke="#B1D3B9" stroke-width="2" />
-          <rect x="42" y="10" width="16" height="10" fill="#1C241E" />
-          <circle cx="50" cy="58" r="8" fill="#FDF6ED" class="lamp-bulb" />
-          <circle cx="50" cy="58" r="14" fill="rgba(253, 246, 237, 0.2)" class="lamp-bulb-glow" />
-        </svg>
-        <div class="lamp-switch" onclick="toggleLamp()" title="Toggle Light">
-          <div class="lamp-string"></div>
-          <div class="lamp-bead"></div>
-        </div>
-      </div>
-      <div class="lamp-light-cone" id="lightCone"></div>
-    </div>
-
-    <div class="auth-glow-1"></div>
-    <div class="auth-glow-2"></div>
-    <div class="auth-card">
-      <div class="auth-logo">
-        <div class="topbar-mark">FG</div>
-        <span>FraudGuard AI</span>
-      </div>
-      <h2 class="auth-title" id="authTitle">Welcome Back</h2>
-      <p class="auth-sub" id="authSub">Enter your security credentials to access the console</p>
-      
-      <!-- Tabs -->
-      <div class="auth-tabs">
-        <button class="auth-tab active" id="auth-tab-login" onclick="switchAuthTab('login')">Sign In</button>
-        <button class="auth-tab" id="auth-tab-signup" onclick="switchAuthTab('signup')">Register</button>
-      </div>
-      
-      <form id="authForm" onsubmit="handleAuthSubmit(event)">
-        <div class="field" style="text-align: left;">
-          <label class="field-label" for="auth-email">Corporate Email</label>
-          <input type="email" id="auth-email" class="auth-input" placeholder="name@company.com" required/>
-        </div>
-        <div class="field" style="text-align: left; margin-top: 14px;">
-          <label class="field-label" for="auth-password">Security Password</label>
-          <div class="auth-password-wrap" style="display: flex; gap: 8px; margin-top: 6px;">
-            <input type="password" id="auth-password" class="auth-input" placeholder="••••••••" required style="margin-top: 0; flex: 1;"/>
-            <button class="btn-toggle-visibility" type="button" onclick="toggleAuthPasswordVisibility()" title="Show Password" aria-label="Show Password" style="height: 42px; border-radius: 8px;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                <circle cx="12" cy="12" r="3"></circle>
-              </svg>
-            </button>
+    <!-- Left Column: Hanging Lamp & Instructions -->
+    <div class="auth-left">
+      <div class="lamp-container">
+        <div class="lamp-rope"></div>
+        <div class="lamp-body-svg">
+          <svg viewBox="0 0 100 100" width="80" height="80">
+            <path d="M20 50 L80 50 L70 20 L30 20 Z" fill="#2A3B30" stroke="#B1D3B9" stroke-width="2" />
+            <rect x="42" y="10" width="16" height="10" fill="#1C241E" />
+            <circle cx="50" cy="58" r="8" fill="#FDF6ED" class="lamp-bulb" />
+            <circle cx="50" cy="58" r="14" fill="rgba(253, 246, 237, 0.2)" class="lamp-bulb-glow" />
+          </svg>
+          <div class="lamp-switch" onclick="toggleLamp()" title="Toggle Light">
+            <div class="lamp-string"></div>
+            <div class="lamp-bead"></div>
           </div>
         </div>
+        <div class="lamp-light-cone" id="lightCone"></div>
+      </div>
+      
+      <!-- Instruction Label -->
+      <div class="lamp-instructions">
+        <span class="lamp-arrow-indicator">←</span>
+        <span>Toggle the switch of the lamp to see the login page</span>
+      </div>
+    </div>
+
+    <!-- Right Column: Login Card -->
+    <div class="auth-right">
+      <div class="auth-glow-1"></div>
+      <div class="auth-glow-2"></div>
+      <div class="auth-card">
+        <div class="auth-logo">
+          <div class="topbar-mark">FG</div>
+          <span>FraudGuard AI</span>
+        </div>
+        <h2 class="auth-title" id="authTitle">Welcome Back</h2>
+        <p class="auth-sub" id="authSub">Enter your security credentials to access the console</p>
         
-        <!-- Error box -->
-        <div class="auth-error" id="authError" style="display: none;"></div>
+        <!-- Tabs -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="auth-tab-login" onclick="switchAuthTab('login')">Sign In</button>
+          <button class="auth-tab" id="auth-tab-signup" onclick="switchAuthTab('signup')">Register</button>
+        </div>
         
-        <button class="btn-analyse" type="submit" style="margin-top: 20px; width: 100%; height: 42px;">
-          <span id="authBtnText">Access Console</span>
-        </button>
-      </form>
+        <form id="authForm" onsubmit="handleAuthSubmit(event)">
+          <div class="field" style="text-align: left;">
+            <label class="field-label" for="auth-email">Corporate Email</label>
+            <input type="email" id="auth-email" class="auth-input" placeholder="name@company.com" required/>
+          </div>
+          <div class="field" style="text-align: left; margin-top: 14px;">
+            <label class="field-label" for="auth-password">Security Password</label>
+            <div class="auth-password-wrap" style="display: flex; gap: 8px; margin-top: 6px;">
+              <input type="password" id="auth-password" class="auth-input" placeholder="••••••••" required style="margin-top: 0; flex: 1;"/>
+              <button class="btn-toggle-visibility" type="button" onclick="toggleAuthPasswordVisibility()" title="Show Password" aria-label="Show Password" style="height: 42px; border-radius: 8px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Error box -->
+          <div class="auth-error" id="authError" style="display: none;"></div>
+          
+          <button class="btn-analyse" type="submit" style="margin-top: 20px; width: 100%; height: 42px;">
+            <span id="authBtnText">Access Console</span>
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 
   <!-- App logic script -->
-  <script src="/static/app.js?v=4.1"></script>
+  <script src="/static/app.js?v=4.2"></script>
 </body>
 </html>

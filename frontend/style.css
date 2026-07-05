@@ -2726,6 +2726,20 @@ html:not(.auth-mode) .auth-page {
   z-index: 9999;
   overflow: hidden;
   transition: background-color 0.6s ease;
+  
+  /* Force high-contrast dark theme variables for black background */
+  --ink: #FFFFFF;
+  --text: #F1F5F9;
+  --muted: #94A3B8;
+  --border: rgba(255, 255, 255, 0.12);
+  --border-2: rgba(255, 255, 255, 0.16);
+  --divider: rgba(255, 255, 255, 0.08);
+  --primary: #B1D3B9; /* Sage Green */
+  --card-bg: rgba(255, 255, 255, 0.04);
+}
+
+.auth-input::placeholder {
+  color: rgba(255, 255, 255, 0.35) !important;
 }
 
 .auth-left {
@@ -2852,6 +2866,7 @@ html:not(.auth-mode) .auth-page {
   margin-top: 20px;
   padding: 0 20px;
   text-align: center;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .lamp-arrow-indicator {
@@ -2886,6 +2901,12 @@ html:not(.auth-mode) .auth-page {
 
 .auth-page.lamp-on .lamp-light-cone {
   opacity: 1;
+}
+
+.auth-page.lamp-on .lamp-instructions {
+  opacity: 0 !important;
+  pointer-events: none;
+  transform: translateY(10px);
 }
 
 .auth-page.lamp-on .auth-right {

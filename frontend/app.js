@@ -1388,3 +1388,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+/* --- Hanging Lamp Animation Logic --- */
+function toggleLamp() {
+  const authPage = document.getElementById('authPage');
+  if (authPage) {
+    authPage.classList.toggle('lamp-on');
+    playSwitchSound();
+  }
+}
+
+function playSwitchSound() {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    
+    // Low frequency pitch pop (triangle wave) simulating a mechanical pull switch click
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(160, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 0.08);
+    
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+    
+    osc.start();
+    osc.stop(ctx.currentTime + 0.08);
+  } catch (e) {}
+}

@@ -2711,3 +2711,145 @@ html:not(.auth-mode) .auth-page {
   color: var(--text);
 }
 
+/* ==========================================
+   HANGING LAMP LOGIN ANIMATION
+   ========================================== */
+.lamp-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.lamp-rope {
+  width: 2px;
+  height: 80px;
+  background: var(--border-2);
+}
+
+.lamp-body-svg {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -2px;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.4));
+}
+
+.lamp-bulb {
+  transition: fill 0.3s ease, filter 0.3s ease;
+  fill: #4b5563; /* Off state */
+}
+
+.lamp-bulb-glow {
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+/* Pull switch chain */
+.lamp-switch {
+  position: absolute;
+  top: 50px;
+  right: 15px;
+  width: 20px;
+  height: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.1s ease;
+}
+.lamp-switch:active {
+  transform: translateY(10px);
+}
+
+.lamp-string {
+  width: 1.5px;
+  height: 50px;
+  background: var(--border-2);
+}
+
+.lamp-bead {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Spotlight light cone */
+.lamp-light-cone {
+  position: absolute;
+  top: 126px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 480px;
+  height: 600px;
+  background: radial-gradient(ellipse at top, rgba(177, 211, 185, 0.28) 0%, rgba(177, 211, 185, 0.05) 50%, rgba(0,0,0,0) 80%);
+  clip-path: polygon(42% 0%, 58% 0%, 100% 100%, 0% 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* Responsive rope heights */
+@media (max-height: 720px) {
+  .lamp-rope {
+    height: 40px;
+  }
+  .lamp-light-cone {
+    top: 86px;
+  }
+}
+
+/* ACTIVE LAMP ON STATES */
+.auth-page.lamp-on .lamp-bulb {
+  fill: #fffbeb;
+  filter: drop-shadow(0 0 12px #fef08a);
+}
+
+.auth-page.lamp-on .lamp-bulb-glow {
+  opacity: 1;
+}
+
+.auth-page.lamp-on .lamp-light-cone {
+  opacity: 1;
+}
+
+/* Auth background toggle */
+.auth-page {
+  transition: background-color 0.5s ease;
+}
+.auth-page:not(.lamp-on) {
+  background-color: #020302 !important;
+}
+
+/* Auth card overlay effects */
+.auth-card {
+  position: relative;
+  z-index: 10;
+  transition: box-shadow 0.5s ease, border-color 0.5s ease, transform 0.5s ease, opacity 0.5s ease;
+  border: 1px solid var(--border);
+}
+
+.auth-page:not(.lamp-on) .auth-card {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8) !important;
+  opacity: 0.8;
+  transform: scale(0.97);
+}
+
+.auth-page.lamp-on .auth-card {
+  box-shadow: 0 0 45px rgba(177, 211, 185, 0.18), inset 0 0 15px rgba(177, 211, 185, 0.05);
+  border-color: rgba(177, 211, 185, 0.35);
+  opacity: 1;
+  transform: scale(1);
+}
+

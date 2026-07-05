@@ -2836,20 +2836,27 @@ html:not(.auth-mode) .auth-page {
 .auth-card {
   position: relative;
   z-index: 10;
-  transition: box-shadow 0.5s ease, border-color 0.5s ease, transform 0.5s ease, opacity 0.5s ease;
   border: 1px solid var(--border);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.6s ease, 
+              border-color 0.6s ease;
 }
 
 .auth-page:not(.lamp-on) .auth-card {
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8) !important;
-  opacity: 0.8;
-  transform: scale(0.97);
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  pointer-events: none;
 }
 
 .auth-page.lamp-on .auth-card {
   box-shadow: 0 0 45px rgba(177, 211, 185, 0.18), inset 0 0 15px rgba(177, 211, 185, 0.05);
   border-color: rgba(177, 211, 185, 0.35);
   opacity: 1;
-  transform: scale(1);
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
 }
 

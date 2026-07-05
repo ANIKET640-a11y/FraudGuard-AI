@@ -10,7 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   
   <!-- Premium Styles -->
-  <link rel="stylesheet" href="/static/style.css?v=3.6"/>
+  <link rel="stylesheet" href="/static/style.css?v=3.7"/>
   <script>
     if (!localStorage.getItem('fg_session')) {
       document.documentElement.classList.add('auth-mode');
@@ -288,6 +288,17 @@
                       <div class="bar-fill navy" id="mcFill" style="width:0%"></div>
                     </div>
                   </div>
+                </div>
+
+                <!-- Layman Explanation Box -->
+                <div class="layman-box" id="laymanBox">
+                  <div class="layman-hd">
+                    <span class="layman-icon" id="laymanIcon">💡</span>
+                    <span class="layman-title" id="laymanTitle">Gateway Risk Insight</span>
+                  </div>
+                  <p class="layman-body" id="laymanBody">
+                    Determining factors will appear here.
+                  </p>
                 </div>
 
               </div>
@@ -583,6 +594,6 @@ run_risk_audit(1500.00, 36000.0)</code></pre>
   </div>
 
   <!-- App logic script -->
-  <script src="/static/app.js?v=3.6"></script>
+  <script src="/static/app.js?v=3.7"></script>
 </body>
 </html>

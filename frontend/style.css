@@ -2653,3 +2653,61 @@ html:not(.auth-mode) .auth-page {
   border-color: var(--primary);
 }
 
+/* ==========================================
+   LAYMAN INSIGHT BOX
+   ========================================== */
+.layman-box {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(var(--primary-rgb), 0.04);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+  text-align: left;
+}
+.layman-box.high {
+  background: rgba(239, 68, 68, 0.04);
+  border-color: rgba(239, 68, 68, 0.15);
+}
+.layman-box.medium {
+  background: rgba(245, 158, 11, 0.04);
+  border-color: rgba(245, 158, 11, 0.15);
+}
+.layman-box.safe, .layman-box.low {
+  background: rgba(16, 185, 129, 0.04);
+  border-color: rgba(16, 185, 129, 0.15);
+}
+
+.layman-hd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.layman-icon {
+  font-size: 16px;
+}
+.layman-title {
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+}
+.layman-box.high .layman-title {
+  color: var(--danger);
+}
+.layman-box.medium .layman-title {
+  color: var(--warn);
+}
+.layman-box.safe .layman-title, .layman-box.low .layman-title {
+  color: var(--primary);
+}
+
+.layman-body {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+}
+

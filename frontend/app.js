@@ -248,9 +248,91 @@ function getInfluenceLabel(impact) {
   return 'Moderate Weight';
 }
 
+function getLaymanExplanation(result) {
+  const prob = result.fraud_probability;
+  const lvl = lvlFor(prob);
+  const amount = result.matched_amount || 0;
+  const topFeatures = result.top_features || [];
+  const topFeat = topFeatures[0] ? topFeatures[0].feature : '';
+  
+  let explanation = '';
+  
+  if (lvl === 'high') {
+    explanation = `<strong>High Threat Blocked:</strong> This transaction was flagged as a potential fraud with a very high confidence score. `;
+    if (amount > 10000) {
+      explanation += `The transaction size of <strong>₹${amount.toLocaleString('en-IN')}</strong> is unusually high for standard profiles. `;
+    }
+    if (topFeat === 'V17') {
+      explanation += `Our security engine detected that the payment request originated from a device situated abnormally far away from your card's historically trusted locations (<strong>Location Divergence</strong>).`;
+    } else if (topFeat === 'V14') {
+      explanation += `We detected a burst of multiple rapid payment attempts in a very short window of time (<strong>Swipe velocity</strong>), which is a common signature of card-testing bots.`;
+    } else if (topFeat === 'V11') {
+      explanation += `There was an unusually high number of rapid attempt signals (<strong>Attempt count</strong>) triggered in your session, suggesting automatic scripts.`;
+    } else if (topFeat === 'V12') {
+      explanation += `The purchase category doesn't match normal consumer spending trends for this profile (<strong>Merchant offset</strong>).`;
+    } else if (topFeat === 'V7') {
+      explanation += `The card was swiped from two locations that are physically impossible to travel between in this timeframe (<strong>Cross-border velocity</strong>).`;
+    } else {
+      explanation += `Key behavioral anomalies were detected in the communication nodes and hardware terminal routing tags, matching known fraudulent profiles.`;
+    }
+    explanation += ` The swipe has been declined immediately to protect the cardholder.`;
+    
+  } else if (lvl === 'medium') {
+    explanation = `<strong>Suspicious Activity Detected:</strong> This transaction exhibits some moderate risk indicators. `;
+    if (amount > 5000) {
+      explanation += `A transaction amount of <strong>₹${amount.toLocaleString('en-IN')}</strong> combined with atypical profile parameters triggered a caution. `;
+    }
+    if (topFeat === 'V17') {
+      explanation += `The device location displays a moderate discrepancy from regular purchase points (<strong>Location Divergence</strong>).`;
+    } else if (topFeat === 'V14') {
+      explanation += `The velocity check shows a slightly accelerated swipe rate (<strong>Swipe velocity</strong>).`;
+    } else if (topFeat === 'V16') {
+      explanation += `The transaction size represents a significant deviation relative to historical spending limits (<strong>Balance utilization</strong>).`;
+    } else {
+      explanation += `Some minor anomalies were found in routing signatures and terminal parameters.`;
+    }
+    explanation += ` We recommend routing the user through a 3D-Secure verification step (OTP verification) or holding for review.`;
+    
+  } else {
+    explanation = `<strong>Approved (Legitimate):</strong> This transaction is fully approved. `;
+    if (amount > 0) {
+      explanation += `The payment of <strong>₹${amount.toLocaleString('en-IN')}</strong> aligns closely with normal spending patterns. `;
+    }
+    if (topFeat === 'V17' || topFeat === 'V14') {
+      explanation += `All primary indicators—including device location routing, transaction velocity, and swipe behavior—remain well within safe, expected baseline ranges.`;
+    } else {
+      explanation += `No significant threat indicators or anomalies were detected in the routing nodes or transaction metadata.`;
+    }
+    explanation += ` The transaction has successfully passed all security clearances.`;
+  }
+  
+  return explanation;
+}
+
 function showResult(result) {
   const prob = result.fraud_probability;
   const lvl = lvlFor(prob);
+  
+  // Render layman explanation
+  const laymanBox = document.getElementById('laymanBox');
+  const laymanBody = document.getElementById('laymanBody');
+  const laymanIcon = document.getElementById('laymanIcon');
+  const laymanTitle = document.getElementById('laymanTitle');
+  if (laymanBox && laymanBody) {
+    laymanBox.className = 'layman-box ' + lvl;
+    laymanBody.innerHTML = getLaymanExplanation(result);
+    if (lvl === 'high') {
+      if (laymanIcon) laymanIcon.textContent = '🚨';
+      if (laymanTitle) laymanTitle.textContent = 'Security Threat Insight';
+    } else if (lvl === 'medium') {
+      if (laymanIcon) laymanIcon.textContent = '⚠️';
+      if (laymanTitle) laymanTitle.textContent = 'Suspicious Signal Insight';
+    } else {
+      if (laymanIcon) laymanIcon.textContent = '✅';
+      if (laymanTitle) laymanTitle.textContent = 'Clearance Insight';
+    }
+  }
+
   const pct = (prob * 100).toFixed(2) + '%';
   const mains = {
     safe: 'Approved (Low Risk)',

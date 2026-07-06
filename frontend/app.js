@@ -878,7 +878,9 @@ function downloadReport() {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8.5);
     setHex('#334155');
-    const rawExplanation = getLaymanExplanation(result).replace(/<\/?strong>/g, '');
+    const rawExplanation = getLaymanExplanation(result)
+      .replace(/<\/?strong>/g, '')
+      .replace(/₹/g, 'INR ');
     y += wrapped(rawExplanation, margin, y, pageW - (margin * 2), 4.2) + 8;
     
     // Section: Audit Trail Table

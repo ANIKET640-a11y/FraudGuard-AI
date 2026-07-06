@@ -346,6 +346,8 @@ function showResult(result) {
   
   document.getElementById('emptyState').style.display = 'none';
   document.getElementById('resultContent').style.display = 'block';
+  const btnClear = document.getElementById('btnClearScorecard');
+  if (btnClear) btnClear.style.display = 'inline-block';
   
   // Update Verdict Banner
   const bn = document.getElementById('vBanner');
@@ -417,6 +419,16 @@ function showResult(result) {
   
   // Slide up download report toast
   showReportToast(result);
+}
+
+function clearScorecard() {
+  const emptyState = document.getElementById('emptyState');
+  const resultContent = document.getElementById('resultContent');
+  const btnClear = document.getElementById('btnClearScorecard');
+  
+  if (emptyState) emptyState.style.display = 'block';
+  if (resultContent) resultContent.style.display = 'none';
+  if (btnClear) btnClear.style.display = 'none';
 }
 
 /* --- Evaluation Logs --- */

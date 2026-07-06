@@ -2969,3 +2969,31 @@ html:not(.auth-mode) .auth-page {
   }
 }
 
+/* Clear Scorecard Button Styling */
+.btn-clear-scorecard {
+  background: rgba(239, 68, 68, 0.08);
+  color: #EF4444;
+  border: 1.2px solid rgba(239, 68, 68, 0.22);
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.btn-clear-scorecard:hover {
+  background: rgba(239, 68, 68, 0.16);
+  border-color: rgba(239, 68, 68, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-clear-scorecard:active {
+  transform: translateY(0);
+}
+

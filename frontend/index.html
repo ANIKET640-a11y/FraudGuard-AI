@@ -10,7 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   
   <!-- Premium Styles -->
-  <link rel="stylesheet" href="/static/style.css?v=4.3"/>
+  <link rel="stylesheet" href="/static/style.css?v=4.4"/>
   <script>
     if (!localStorage.getItem('fg_session')) {
       document.documentElement.classList.add('auth-mode');
@@ -231,14 +231,16 @@
             </div>
           </section>
 
-          <!-- Right Column: Results Card -->
           <section class="card" aria-labelledby="results-title">
             <div class="card-hd">
               <div>
                 <h2 class="card-title" id="results-title">Risk Scorecard</h2>
                 <div class="card-sub">Real-time probability metrics and SHAP contributions</div>
               </div>
-              <span class="card-chip">Analysis</span>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="btn-clear-scorecard" id="btnClearScorecard" onclick="clearScorecard()" style="display: none;" title="Clear current evaluation">Clear Result</button>
+                <span class="card-chip">Analysis</span>
+              </div>
             </div>
 
             <!-- Empty State -->
@@ -623,6 +625,6 @@ run_risk_audit(1500.00, 36000.0)</code></pre>
   </div>
 
   <!-- App logic script -->
-  <script src="/static/app.js?v=4.3"></script>
+  <script src="/static/app.js?v=4.4"></script>
 </body>
 </html>

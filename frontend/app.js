@@ -773,7 +773,7 @@ function downloadReport() {
     const setHex = (hex) => doc.setTextColor(...hexToRgb(hex));
     const fillHex = (hex) => doc.setFillColor(...hexToRgb(hex));
     const lineHex = (hex) => doc.setDrawColor(...hexToRgb(hex));
-    const text = (value, x, yy, opts = {}) => doc.text(String(value), x, yy, opts);
+    const text = (value, x, yy, opts = {}) => doc.text(String(value), x, yy, Object.assign({ align: 'left' }, opts));
     
     const ensureSpace = (needed) => {
       if (y + needed > pageH - 22) {
@@ -794,7 +794,7 @@ function downloadReport() {
     };
     const wrapped = (value, x, yy, width, lineHeight = 5) => {
       const lines = doc.splitTextToSize(String(value), width);
-      lines.forEach((line, i) => text(line, x, yy + (i * lineHeight)));
+      lines.forEach((line, i) => text(line.trim(), x, yy + (i * lineHeight), { align: 'left' }));
       return lines.length * lineHeight;
     };
     const infoBox = (label, value, x, yy, w, h = 22) => {
